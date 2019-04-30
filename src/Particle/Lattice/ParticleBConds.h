@@ -180,6 +180,8 @@ struct DTD_BConds<T, 3, PPPG + SOA_OFFSET>
 
     constexpr T minusone(-1);
     constexpr T one(1);
+ 
+   if (last != 32) {
     #pragma omp simd aligned(temp_r, px, py, pz, dx, dy, dz)
     for (int iat = first; iat < last; ++iat)
     {
@@ -214,6 +216,20 @@ struct DTD_BConds<T, 3, PPPG + SOA_OFFSET>
       dy[iat]     = flip * (dely + celly[ic]);
       dz[iat]     = flip * (delz + cellz[ic]);
     }
+   } else {
+
+          for (int iat = first; iat < last; ++iat)
+    {
+                printf("h| %i %lf \n", iat, px[iat]);
+    }
+
+        #pragma omp target map(tofrom:px[0:last],py[0:last])
+          for (int iat = first; iat < last; ++iat)
+    {
+                printf("d| %i %lf \n", iat, px[iat]);
+    }
+        std::exit(0);
+   }
   }
 };
 
